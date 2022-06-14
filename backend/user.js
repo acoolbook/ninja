@@ -6,7 +6,7 @@ require('dotenv').config();
 const QRCode = require('qrcode');
 const { addEnv, delEnv, getEnvs, getEnvsCount, updateEnv } = require('./ql');
 const path = require('path');
-const qlDir = process.env.QL_DIR || '/ql';
+const qlDir =  '/ql';
 const notifyFile = path.join(qlDir, 'shell/notify.sh');
 const { exec } = require('child_process');
 const { GET_RANDOM_TIME_UA } = require('./utils/USER_AGENT');
@@ -171,13 +171,13 @@ module.exports = class User {
         if (body.code !== 200) {
           throw new UserError(body.message || '添加账户错误，请重试', 220, body.code || 200);
         }
-        this.eid = body.data[0]._id;
+        this.eid = body.data[0]._id || body.data[0].id;
         this.timestamp = body.data[0].timestamp;
         message = `注册成功，${this.nickName}`;
         this.#sendNotify('Ninja 运行通知', `用户 ${this.nickName}(${decodeURIComponent(this.pt_pin)}) 已上线`);
       }
     } else {
-      this.eid = env._id;
+      this.eid = env._id || env.id;
       const body = await updateEnv(this.cookie, this.eid);
       if (body.code !== 200) {
         throw new UserError(body.message || '更新账户错误，请重试', 221, body.code || 200);
@@ -196,7 +196,7 @@ module.exports = class User {
 
   async getUserInfoByEid() {
     const envs = await getEnvs();
-    const env = await envs.find((item) => item._id === this.eid);
+    const env = await envs.find((item) => item._id || item.id === this.eid);
     if (!env) {
       throw new UserError('没有找到这个账户，重新登录试试看哦', 230, 200);
     }
@@ -221,7 +221,7 @@ module.exports = class User {
     }
 
     const envs = await getEnvs();
-    const env = await envs.find((item) => item._id === this.eid);
+    const env = await envs.find((item) => item._id || item.id === this.eid);
     if (!env) {
       throw new UserError('没有找到这个账户，重新登录试试看哦', 230, 200);
     }
