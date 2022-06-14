@@ -66,7 +66,7 @@ module.exports.addEnv = async (cookie, remarks) => {
   return body;
 };
 
-module.exports.updateEnv = async (cookie, eid, remarks) => {
+module.exports.updateEnv = async (cookie, eid, remarks) => {//id或_id
   const token = await getToken();
   const body = await api({
     method: 'put',
@@ -75,7 +75,7 @@ module.exports.updateEnv = async (cookie, eid, remarks) => {
     json: {
       name: 'JD_COOKIE',
       value: cookie,
-      _id: eid,
+      id: eid,
       remarks,
     },
     headers: {
@@ -96,7 +96,7 @@ module.exports.updateEnv11 = async (cookie, eid, remarks) => {
     json: {
       name: 'JD_COOKIE',
       value: cookie,
-      id: eid,
+      _id: eid,
       remarks,
     },
     headers: {
